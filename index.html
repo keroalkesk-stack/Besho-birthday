@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كل سنة وإنت طيب يا أخويا! 🎉🎂</title>
+    
+    <!-- استدعاء خطوط عربية شيك من جوجل -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,700;1,400&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS للتصميم المتجاوب -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- مكتبة قصاصات الألوان والاحتفال Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* إعدادات الخطوط والألوان الأساسية */
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 55%, #090d16 100%);
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .font-letter {
+            font-family: 'Amiri', serif;
+        }
+
+        /* أنيميشن الطفو للصور والأيقونات */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.4), 0 0 40px rgba(168, 85, 247, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(251, 191, 36, 0.8), 0 0 60px rgba(168, 85, 247, 0.5); }
+        }
+        .glow-ring {
+            animation: pulseGlow 3s infinite;
+        }
+
+        /* تنسيق كروت الصور الفورية (3D Flip Polaroid) */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* تنسيق كروت الخربشة (Scratch Cards) */
+        .scratch-container {
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+        }
+        .scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            touch-action: none; /* مهم جداً عشان الصفحة متتحركش وقت الخربشة على الموبايل */
+            cursor: crosshair;
+            transition: opacity 0.6s ease;
+        }
+
+        /* أنيميشن اهتزاز للإجابات الغلط في الكويز */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.35s ease-in-out;
+        }
+
+        /* شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-amber-400 selection:text-slate-900">
+
+    <!-- ملف الصوت: حط أغنيتك المفضلة في نفس الفولدر وسميها song.mp3 -->
+    <audio id="bgAudio" src="song.mp3" loop preload="auto"></audio>
+
+    <!-- ===================================================================== -->
+    <!-- 0. شاشة الدخلة المفاجأة (Welcome Surprise Overlay)                     -->
+    <!-- ===================================================================== -->
+    <div id="welcomeOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-xl px-6 text-center transition-all duration-700">
+        <div class="relative mb-6">
+            <div class="w-28 h-28 rounded-3xl bg-gradient-to-tr from-amber-400 via-rose-500 to-purple-600 flex items-center justify-center text-5xl shadow-2xl animate-bounce">
+                🎁
+            </div>
+            <span class="absolute -top-2 -right-2 bg-emerald-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow-lg">
+                خاص جداً
+            </span>
+        </div>
+        
+        <h1 class="text-3xl sm:text-5xl font-black text-white mb-4 leading-tight">
+            استعد يا نجم.. <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-rose-400">
+                في حاجة معمولة مخصوص عشانك!
+            </span>
+        </h1>
+        
+        <p class="text-slate-300 text-base sm:text-lg max-w-md mb-8">
+            عَلّي صوت الموبايل ودوس على الزرار اللي تحت عشان تبدأ الاحتفال 🚀
+        </p>
+
+        <button onclick="startCelebration()" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 font-black text-xl rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.5)] transform hover:scale-105 active:scale-95 transition-all cursor-pointer">
+            <span>افتح هديتك 🎉</span>
+            <i class="fa-solid fa-sparkles group-hover:rotate-12 transition-transform"></i>
+        </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- أزرار التحكم العائمة (المزيكا + فرقعة ألوان)                          -->
+    <!-- ===================================================================== -->
+    <div class="fixed bottom-4 left-4 z-40 flex items-center gap-2 bg-slate-900/85 backdrop-blur-md border border-white/15 p-2 rounded-full shadow-2xl">
+        <button id="musicToggleBtn" onclick="toggleMusic()" class="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition cursor-pointer">
+            <i id="musicIcon" class="fa-solid fa-volume-high"></i>
+            <span id="musicLabel">المزيكا شغالة</span>
+        </button>
+        <button onclick="fireConfettiBurst()" title="فرقعة ألوان" class="w-10 h-10 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center font-bold shadow transition transform active:scale-90 cursor-pointer">
+            🎉
+        </button>
+    </div>
+
+    <!-- إشعار Toast مخصص بدل alert -->
+    <div id="toastBox" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-4">
+        <div id="toastContent" class="bg-slate-900/95 border border-amber-400/50 text-white px-6 py-3 rounded-2xl shadow-2xl font-bold text-sm sm:text-base flex items-center gap-2">
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 1. الواجهة الرئيسية (Hero Section)                                    -->
+    <!-- ===================================================================== -->
+    <header class="relative pt-14 pb-16 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+        <!-- خلفية ديكورية -->
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl -z-10"></div>
+        <div class="absolute top-20 right-10 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl -z-10"></div>
+
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 text-amber-300 text-sm font-bold mb-6">
+            <span>🔥 النهارده مش يوم عادي في السنة</span>
+        </div>
+
+        <!-- الصورة الرئيسية: hero.jpg -->
+        <div class="relative w-44 h-44 sm:w-56 sm:h-56 mx-auto mb-8 animate-float">
+            <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-4xl drop-shadow-lg z-10">👑</div>
+            <div class="w-full h-full rounded-full p-1.5 bg-gradient-to-tr from-amber-400 via-rose-500 to-indigo-500 glow-ring">
+                <img src="hero.jpg" 
+                     alt="صورة أخويا البطل" 
+                     onerror="this.onerror=null; this.src='https://placehold.co/500x500/1e1b4b/fbbf24?text=hero.jpg';"
+                     class="w-full h-full object-cover rounded-full border-4 border-slate-900">
+            </div>
+            <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs sm:text-sm font-black px-4 py-1 rounded-full shadow-lg whitespace-nowrap">
+                البرنس شخصياً ⭐
+            </div>
+        </div>
+
+        <!-- تقدر تكتب اسمه هنا مكان كلمة "يا أخويا" لو حابب -->
+        <h1 class="text-4xl sm:text-6xl font-black mb-4 leading-tight">
+            كل سنة وإنت طيب <br class="sm:hidden">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-rose-400">
+                يا أجدع أخ في الدنيا!
+            </span>
+        </h1>
+
+        <p class="text-slate-300 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
+            النهارده عيد ميلاد صاحبي وسندي وضهري.. حبيت أعملك حاجة مختلفة تليق بيك وتفكرك دايماً إن وجودك في حياتي بالدنيا وما فيها. انزل تحت وشوف المفاجآت 👇
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="#gallery" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 font-bold text-sm sm:text-base transition">
+                📸 ذكرياتنا سوا
+            </a>
+            <a href="#vouchers" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 font-bold text-sm sm:text-base transition">
+                🎟️ هداياك وكوبوناتك
+            </a>
+            <a href="#quiz" class="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base shadow-lg transition">
+                💌 افتح الرسالة السرية
+            </a>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- 2. ألبوم الذكريات التفاعلي (3D Flip Polaroids - pic1.jpg to pic6.jpg)  -->
+    <!-- ===================================================================== -->
+    <section id="gallery" class="py-14 px-4 sm:px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">
+                شويه من فضايحك اللى معايا 📸
+            </h2>
+            <p class="text-amber-300 text-sm sm:text-base font-semibold bg-amber-400/10 inline-block px-4 py-1.5 rounded-full border border-amber-400/20">
+                👆 اضغط على أي صورة عشان تتقلب وتشوف اللي مكتوب في ضهرها!
+            </p>
+        </div>
+
+        <!-- شبكة الـ 6 صور (تقدر تعدل العناوين والتعليقات اللي في الضهر براحتك) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+            
+            <!-- الصورة 1: pic1.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <!-- الوجه الأمامي -->
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic1.jpg" alt="ذكرى 1" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic1.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg">❤️على قديمه انت بردو❤️</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <!-- الضهر -->
+                    <div class="flip-card-back bg-gradient-to-br from-indigo-600 to-purple-800 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">❤️</span>
+                        <h3 class="text-xl font-black text-amber-300 mb-2">اخويا الى بجد</h3>
+                        <p class="text-white/90 text-base leading-relaxed">
+                            شوف اعرفك ليا قد ايه ؟ انا بقول كفايه علينا كده احنا كده كتير اوى😂❤️ بس هنعمل ايه فى غريزه الرأفه بالحيوان اللى جوايا مضطر اخليك معايا شويه🤷🫶 \!    .
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصورة 2: pic2.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic2.jpg" alt="ذكرى 2" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic2.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg">ادخل برجلك اليمين على اللى جاى ده</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <div class="flip-card-back bg-gradient-to-br from-rose-600 to-orange-700 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">😂</span>
+                        <h3 class="text-xl font-black text-amber-200 mb-2"> فاكر اليوم ده ؟ </h3>
+                        <p class="text-white/95 text-base leading-relaxed">
+                            قالك يا اخويا العربيه الجديده و الطاقه النظيفه و الحياه الفشيخه....انا و انت على ارض عمو ميلاد الفجر😂😂😂              .
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصورة 3: pic3.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic3.jpg" alt="ذكرى 3" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic3.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg"> يا ابو عين زايغه🌚😂</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <div class="flip-card-back bg-gradient-to-br from-emerald-600 to-teal-800 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">🤝</span>
+                        <h3 class="text-xl font-black text-amber-300 mb-2">يا جدع سبايدرمان ايه شايف الحته دى🫦</h3>
+                        <p class="text-white/95 text-base leading-relaxed">
+                            عاشق الراقصات الاول و الزانى الاعظم😂اللى ريلزاته احلى من الكيكه بالشيكولاته❤️.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصورة 4: pic4.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic4.jpg" alt="ذكرى 4" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic4.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg">الخادم الامين😇</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <div class="flip-card-back bg-gradient-to-br from-blue-600 to-indigo-900 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">💒</span>
+                        <h3 class="text-xl font-black text-amber-300 mb-2">اجدع شماس فى بلدك</h3>
+                        <p class="text-white/95 text-base leading-relaxed">
+                                  بعيدا عن الهزار بجد لا انت شماس شاطر اوى و خادم مجتهد و امين فى خدمتك و دراستك و شاطر و متفوق اوى , ربنا يخليك السنه دى كمان اشطر من قبل كده و يبارك فى كل حاجة ايدك بتتمدلها حبيبى
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصورة 5: pic5.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic5.jpg" alt="ذكرى 5" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic5.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg">شياكة وأناقة ✨</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <div class="flip-card-back bg-gradient-to-br from-amber-600 to-red-800 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">📸</span>
+                        <h3 class="text-xl font-black text-white mb-2"> انضف من لبس بدله فى بلدك </h3>
+                        <p class="text-white/95 text-base leading-relaxed">
+                            الصورة دي من الصور المفضلة ليا و الصوره الوحيده النضيفه اللى لينا سوا، دايماً منور ووشك بيضحك يا عمنا.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصورة 6: pic6.jpg -->
+            <div class="flip-card h-96" onclick="flipCard(this)">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front bg-slate-100 p-3 pb-5 shadow-2xl flex flex-col">
+                        <div class="w-full h-72 overflow-hidden rounded-lg bg-slate-800">
+                            <img src="pic6.jpg" alt="ذكرى 6" onerror="this.onerror=null; this.src='https://placehold.co/600x600/1e1b4b/fbbf24?text=pic6.jpg';" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3 flex items-center justify-between px-1 text-slate-900">
+                            <span class="font-black text-lg">عشرة العمر ❤️</span>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1 rounded-full">اقلب الصورة ↻</span>
+                        </div>
+                    </div>
+                    <div class="flip-card-back bg-gradient-to-br from-purple-700 to-pink-800 p-6 flex flex-col items-center justify-center text-center border-2 border-amber-300/40 shadow-2xl">
+                        <span class="text-4xl mb-4">🎂</span>
+                        <h3 class="text-xl font-black text-amber-300 mb-2">عقبال مليون سنة</h3>
+                        <p class="text-white/95 text-base leading-relaxed">
+                            سنة جديدة سعيدة عليك يا أخويا، مليانة نجاح وصحة وستر وراحة بال وسطينا و وسط كل اللى انت بتحبهم و ديما مبسوط و فرحان و ناجح و اشوفك احسن حد فى الدنيا كلها حبيبى.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 3. كوبونات الهدايا القابلة للخربشة (Interactive Scratch Vouchers)       -->
+    <!-- ===================================================================== -->
+    <section id="vouchers" class="py-14 px-4 sm:px-6 max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl sm:text-4xl font-black text-white mb-3">
+                اكشط واكسب هداياك 🎟️🪙
+            </h2>
+            <p class="text-slate-300 text-sm sm:text-base">
+                امسح الطبقة الفضية بصباعك على الشاشة عشان تعرف هداياك النهارده (صورة سكرين شوت وابعتلي عشان تنفذهم!)
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- كوبون 1 -->
+            <div class="scratch-container h-52 rounded-2xl border-2 border-dashed border-amber-400/60 bg-gradient-to-br from-slate-800 to-slate-900 shadow-xl flex flex-col items-center justify-center p-5 text-center">
+                <span class="text-4xl mb-2">🍕🍔</span>
+                <h3 class="text-xl font-black text-amber-400 mb-1">عزومة أكل على حسابي</h3>
+                <p class="text-slate-200 text-sm">اطلب الأكلة اللي نفسك فيها النهارده والفيزا بتاعتي جاهزة!</p>
+                <canvas class="scratch-canvas rounded-2xl" data-voucher="1"></canvas>
+            </div>
+
+            <!-- كوبون 2 -->
+            <div class="scratch-container h-52 rounded-2xl border-2 border-dashed border-emerald-400/60 bg-gradient-to-br from-slate-800 to-slate-900 shadow-xl flex flex-col items-center justify-center p-5 text-center">
+                <span class="text-4xl mb-2">👑🛋️</span>
+                <h3 class="text-xl font-black text-emerald-400 mb-1">إعفاء من أي شغل بيت</h3>
+                <p class="text-slate-200 text-sm">إعفاء رسمي من غسيل المواعين وترويق الشقة لمدة يوم كامل!</p>
+                <canvas class="scratch-canvas rounded-2xl" data-voucher="2"></canvas>
+            </div>
+
+            <!-- كوبون 3 -->
+            <div class="scratch-container h-52 rounded-2xl border-2 border-dashed border-rose-400/60 bg-gradient-to-br from-slate-800 to-slate-900 shadow-xl flex flex-col items-center justify-center p-5 text-center">
+                <span class="text-4xl mb-2">🚗💨</span>
+                <h3 class="text-xl font-black text-rose-400 mb-1">خروجة على ذوقك</h3>
+                <p class="text-slate-200 text-sm">تختار المكان والوقت وأنا معاك من غير أي اعتراض أو تأخير!</p>
+                <canvas class="scratch-canvas rounded-2xl" data-voucher="3"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 4. اختبار الأخوة السريع (Mini Quiz) لفتح الرسالة الختامية              -->
+    <!-- ===================================================================== -->
+    <section id="quiz" class="py-14 px-4 sm:px-6 max-w-3xl mx-auto">
+        <div class="bg-white/5 backdrop-blur-lg border border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl">
+            <div class="text-center mb-8">
+                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-xs font-bold px-3 py-1 rounded-full">
+                    تحدي سريع 🧠
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-black text-white mt-3 mb-2">
+                    جاوب على 3 أسئلة عشان تفتح الرسالة السرية
+                </h2>
+                <p class="text-slate-400 text-sm">وريني تركيزك يا بطل عشان القفل يتفتح 🔓</p>
+            </div>
+
+            <!-- شريط التقدم -->
+            <div class="w-full bg-slate-800 h-2.5 rounded-full mb-8 overflow-hidden">
+                <div id="quizProgress" class="bg-gradient-to-r from-amber-400 to-rose-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+
+            <!-- الأسئلة -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- سؤال 1 -->
+                <div class="quiz-step bg-slate-900/70 p-5 rounded-2xl border border-white/10" data-step="1">
+                    <p class="font-bold text-lg text-amber-300 mb-4">1. مين فينا اللي دايماً بيتأخر لما نتفق ننزل سوا؟ ⏰</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(1, true, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            أنا طبعاً (بس النهارده عيد ميلادي ومسموحلي) 😂
+                        </button>
+                        <button onclick="answerQuiz(1, false, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            إنت يا باشا وأنا باجي في ميعادي بالثانية 😇
+                        </button>
+                    </div>
+                </div>
+
+                <!-- سؤال 2 -->
+                <div class="quiz-step bg-slate-900/70 p-5 rounded-2xl border border-white/10" data-step="2">
+                    <p class="font-bold text-lg text-amber-300 mb-4">2. إيه أهم حاجة لازم تحصل النهارده؟ 🎉</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(2, false, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            ننام بدري ونوفر طاقتنا 😴
+                        </button>
+                        <button onclick="answerQuiz(2, true, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            نروق على نفسنا ونحتفل أحلى احتفال 🔥
+                        </button>
+                    </div>
+                </div>
+
+                <!-- سؤال 3 -->
+                <div class="quiz-step bg-slate-900/70 p-5 rounded-2xl border border-white/10" data-step="3">
+                    <p class="font-bold text-lg text-amber-300 mb-4">3. مين اللى هيحبسنا و يرجعنا على مصر بالشباشب 🌍</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(3, true, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            صاحب عيد الميلاد طبعاً (إنت يا نجم) 👑
+                        </button>
+                        <button onclick="answerQuiz(3, true, this)" class="quiz-btn text-right p-3.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 font-semibold transition cursor-pointer">
+                            إحنا الاتنين مكملين بعض 💪
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 5. الرسالة الختامية السرية (Heartfelt Letter)                         -->
+    <!-- ===================================================================== -->
+    <section id="secretLetterSection" class="py-12 px-4 sm:px-6 max-w-3xl mx-auto">
+        <div class="relative rounded-3xl overflow-hidden border-2 border-amber-400/40 bg-gradient-to-b from-slate-900 via-indigo-950/80 to-slate-900 p-8 sm:p-12 shadow-2xl">
+            
+            <!-- طبقة القفل قبل حل الكويز -->
+            <div id="letterLockOverlay" class="absolute inset-0 z-20 backdrop-blur-md bg-slate-950/80 flex flex-col items-center justify-center p-6 text-center transition-all duration-700">
+                <div class="w-16 h-16 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-3xl text-amber-400 mb-4">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-black text-white mb-2">الرسالة دي مقفولة مؤقتاً 🔒</h3>
+                <p class="text-slate-300 text-sm sm:text-base max-w-sm">
+                    جاوب على الـ 3 أسئلة اللي فوق صح عشان القفل يتفتح وتقرأ الكلام اللي من القلب!
+                </p>
+            </div>
+
+            <!-- محتوى الرسالة -->
+            <div class="text-center">
+                <div class="text-4xl mb-4">💌</div>
+                <h2 class="text-2xl sm:text-4xl font-black text-amber-300 mb-6">
+                    كلمتين بقى من القلب نقفل بيهم الدنيا دى ❤️
+                </h2>
+                
+                <!-- تقدر تعدل الرسالة دي براحتك وتكتب الكلام اللي تحبه -->
+                <div class="font-letter text-xl sm:text-2xl text-slate-100 leading-loose space-y-4 text-right sm:text-center">
+                    <p>
+                        "فان مارفل الاول و رفيق دكتور دوم القادم😂🥰 نجم راقصات مصر كلهم و اللى معلى الريتش للطبله🌚😂❤️❤️❤️باشا انت عارف من زمان ان انت مش اخويا بس ، انت اخويا و صحبى و ابنى و عشره عمرى و صاحب مراحل كتير اوى فى حياتى و الشخص الوحيد اللى قعد معايا فيهم كلهم❤️ اينعم انت نصايحك منيله بنيله و كلها عايزه الحرق😂❤️ بس يعنى هنعديها علشان عيد ميلادك و كده فمش هينفع يعنى نتخانق بعدين🤏.
+                    </p>
+                    <p>
+                        كل سنه و انت طيب كل سنه و انت جميل كل سنه و انت مبسوط و فرحان و محقق كل اللى نفسك فيه يا صحبى و اشوفك ديما مبسوط و فرحان و ناجح فى كل حاجة ايدك بتتمدلها يا حبيبى ❤️❤️
+                    </p>
+                    <p>
+                        بدعيلك من قلبي إن السنة الجديدة دي تكون وش الخير عليك، وتحقق فيها كل أحلامك وطموحاتك، وأشوفك دايماً في أعلى المراتب ومبسوط ومرتاح البال.
+                    </p>
+                    <p class="text-amber-300 font-bold pt-2">
+                        HOPE YOU THE BEST EVER YA A50 ❤️"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 6. الفوتر + المفاجأة المستخبية (Easter Egg: funny.jpg)               -->
+    <!-- ===================================================================== -->
+    <footer class="py-12 px-4 text-center border-t border-white/10 mt-10">
+        <p class="text-slate-400 text-sm mb-6">
+            صُنع بكل حب وشقلبة مخصوص عشان عيد ميلادك 🎂✨
+        </p>
+
+        <!-- زرار المفاجأة المستخبية -->
+        <button onclick="openEasterEgg()" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-bold transition cursor-pointer">
+            <span>🚫 إوعى تدوس هنا مهما حصل 👀</span>
+        </button>
+    </footer>
+
+    <!-- نافذة المفاجأة المستخبية (Modal) -->
+    <div id="easterEggModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
+        <div class="bg-slate-900 border-2 border-rose-500/50 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl transform scale-95 transition-all">
+            <div class="flex justify-between items-center mb-4">
+                <span class="bg-rose-500 text-white text-xs font-black px-3 py-1 rounded-full">فضيحة حصرية 😂</span>
+                <button onclick="closeEasterEgg()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <!-- أضحك صورة: funny.jpg -->
+            <div class="w-full h-72 rounded-2xl overflow-hidden mb-4 bg-slate-800 border border-white/10">
+                <img src="funny.jpg" 
+                     alt="لقطة كوميدية" 
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x600/881337/fde047?text=funny.jpg';"
+                     class="w-full h-full object-cover">
+            </div>
+
+            <h3 class="text-2xl font-black text-amber-300 mb-2">قولتلك متدوسش! 🤣</h3>
+            <p class="text-slate-300 text-sm mb-5">
+                اللقطة دي لازم تتبروز وتتحط في المتحف.. كل سنة وإنت منور حياتنا بضحكتك!
+            </p>
+            <button onclick="closeEasterEgg()" class="w-full py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black transition cursor-pointer">
+                خلاص هسكت 😂
+            </button>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- أكواد الجافاسكريبت والتفاعل (JavaScript)                              -->
+    <!-- ===================================================================== -->
+    <script>
+        // --- 1. نظام الصوت (يشغل song.mp3 ولو مش موجود يشغل لحن عيد ميلاد احتياطي) ---
+        const bgAudio = document.getElementById('bgAudio');
+        let isPlaying = false;
+        let useSynthFallback = false;
+        let audioCtx = null;
+        let synthInterval = null;
+
+        // لو ملف song.mp3 مش موجود لسه في الفولدر، نفعل اللحن الاحتياطي تلقائياً
+        bgAudio.addEventListener('error', () => {
+            useSynthFallback = true;
+        });
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // نغمة احتفالية بسيطة بالـ Web Audio API
+        function playTone(freq, duration = 0.25, type = 'sine') {
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function startSynthBirthdayLoop() {
+            // نوتات أغنية Happy Birthday
+            const notes = [
+                { f: 261.63, d: 300 }, { f: 261.63, d: 300 }, { f: 293.66, d: 600 }, { f: 261.63, d: 600 }, { f: 349.23, d: 600 }, { f: 329.63, d: 1000 },
+                { f: 261.63, d: 300 }, { f: 261.63, d: 300 }, { f: 293.66, d: 600 }, { f: 261.63, d: 600 }, { f: 392.00, d: 600 }, { f: 349.23, d: 1000 }
+            ];
+            let idx = 0;
+            clearInterval(synthInterval);
+            synthInterval = setInterval(() => {
+                if (!isPlaying) return;
+                playTone(notes[idx].f, 0.35, 'triangle');
+                idx = (idx + 1) % notes.length;
+            }, 550);
+        }
+
+        function playMusic() {
+            isPlaying = true;
+            updateMusicUI();
+            if (!useSynthFallback) {
+                bgAudio.play().catch(() => {
+                    useSynthFallback = true;
+                    startSynthBirthdayLoop();
+                });
+            } else {
+                startSynthBirthdayLoop();
+            }
+        }
+
+        function pauseMusic() {
+            isPlaying = false;
+            updateMusicUI();
+            bgAudio.pause();
+            clearInterval(synthInterval);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                pauseMusic();
+                showToast('🔇 تم إيقاف الصوت');
+            } else {
+                playMusic();
+                showToast('🎵 الصوت اشتغل!');
+            }
+        }
+
+        function updateMusicUI() {
+            const icon = document.getElementById('musicIcon');
+            const label = document.getElementById('musicLabel');
+            if (isPlaying) {
+                icon.className = 'fa-solid fa-volume-high';
+                label.textContent = 'المزيكا شغالة';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+                label.textContent = 'تشغيل المزيكا';
+            }
+        }
+
+        // --- 2. بدء الاحتفال عند الضغط على زر الدخلة ---
+        function startCelebration() {
+            const overlay = document.getElementById('welcomeOverlay');
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            setTimeout(() => overlay.remove(), 700);
+
+            playMusic();
+            fireConfettiBurst();
+            setTimeout(fireConfettiBurst, 700);
+        }
+
+        // --- 3. فرقعة الألوان Confetti ---
+        function fireConfettiBurst() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 75,
+                    origin: { y: 0.65 },
+                    colors: ['#fbbf24', '#f43f5e', '#a855f7', '#34d399', '#38bdf8']
+                });
+            }
+        }
+
+        // --- 4. نظام التنبيهات السريعة Toast ---
+        let toastTimeout;
+        function showToast(msg) {
+            const box = document.getElementById('toastBox');
+            const content = document.getElementById('toastContent');
+            content.textContent = msg;
+            box.classList.remove('opacity-0', '-translate-y-4');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.add('opacity-0', '-translate-y-4');
+            }, 2800);
+        }
+
+        // --- 5. قلب كروت الصور 3D ---
+        function flipCard(card) {
+            card.classList.toggle('is-flipped');
+            playTone(523.25, 0.12, 'sine');
+        }
+
+        // --- 6. كروت الخربشة (Scratch Cards) باللمس والماوس ---
+        function initScratchCards() {
+            const canvases = document.querySelectorAll('.scratch-canvas');
+            
+            canvases.forEach((canvas) => {
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+
+                // رسم الطبقة الفضية الذهبية
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#94a3b8');
+                grad.addColorStop(0.5, '#cbd5e1');
+                grad.addColorStop(1, '#64748b');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // كتابة نص إرشادي فوق الطبقة
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '900 18px Cairo, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🪙 امسح هنا واكشف هديتك', canvas.width / 2, canvas.height / 2);
+
+                let isDrawing = false;
+                let revealed = false;
+                let strokeCount = 0;
+
+                function getPos(e) {
+                    const bounds = canvas.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    return {
+                        x: clientX - bounds.left,
+                        y: clientY - bounds.top
+                    };
+                }
+
+                function scratch(e) {
+                    if (!isDrawing || revealed) return;
+                    if (e.cancelable) e.preventDefault();
+                    
+                    const pos = getPos(e);
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 26, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    strokeCount++;
+                    if (strokeCount % 12 === 0) {
+                        checkRevealProgress();
+                    }
+                }
+
+                function checkRevealProgress() {
+                    if (revealed) return;
+                    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    let transparent = 0;
+                    for (let i = 3; i < pixels.length; i += 32) {
+                        if (pixels[i] === 0) transparent++;
+                    }
+                    const totalSampled = pixels.length / 32;
+                    if ((transparent / totalSampled) > 0.42) {
+                        revealed = true;
+                        canvas.style.opacity = '0';
+                        setTimeout(() => canvas.remove(), 600);
+                        fireConfettiBurst();
+                        playTone(659.25, 0.3, 'triangle');
+                        showToast('🎉 مبروك عليك الهدية يا نجم!');
+                    }
+                }
+
+                canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+                canvas.addEventListener('mousemove', scratch);
+                window.addEventListener('mouseup', () => { isDrawing = false; });
+
+                canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: false });
+                canvas.addEventListener('touchmove', scratch, { passive: false });
+                canvas.addEventListener('touchend', () => { isDrawing = false; });
+            });
+        }
+
+        // --- 7. منطق الكويز وفتح الرسالة السرية ---
+        const solvedSteps = new Set();
+
+        function answerQuiz(step, isCorrect, btn) {
+            const stepBox = btn.closest('.quiz-step');
+            
+            if (isCorrect) {
+                if (!solvedSteps.has(step)) {
+                    solvedSteps.add(step);
+                    playTone(587.33, 0.2, 'sine');
+                    
+                    // تلوين الزرار الصح
+                    const allBtns = stepBox.querySelectorAll('.quiz-btn');
+                    allBtns.forEach(b => b.disabled = true);
+                    btn.classList.remove('bg-white/5');
+                    btn.classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
+
+                    // تحديث شريط التقدم
+                    const progress = (solvedSteps.size / 3) * 100;
+                    document.getElementById('quizProgress').style.width = `${progress}%`;
+
+                    if (solvedSteps.size === 3) {
+                        unlockSecretLetter();
+                    } else {
+                        showToast(`✅ عاش! فاضلك ${3 - solvedSteps.size} أسئلة`);
+                    }
+                }
+            } else {
+                // اهتزاز عند الإجابة الغلط
+                playTone(196.00, 0.25, 'sawtooth');
+                stepBox.classList.remove('animate-shake');
+                void stepBox.offsetWidth;
+                stepBox.classList.add('animate-shake');
+                showToast('😜 لأ ركز شوية وجرب الإجابة التانية!');
+            }
+        }
+
+        function unlockSecretLetter() {
+            const lockOverlay = document.getElementById('letterLockOverlay');
+            lockOverlay.style.opacity = '0';
+            lockOverlay.style.pointerEvents = 'none';
+            setTimeout(() => lockOverlay.remove(), 700);
+
+            fireConfettiBurst();
+            setTimeout(fireConfettiBurst, 500);
+            showToast('🔓 مبروك! الرسالة السرية اتفتحت تحت 👇');
+
+            setTimeout(() => {
+                document.getElementById('secretLetterSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 600);
+        }
+
+        // --- 8. المفاجأة المستخبية (Easter Egg) ---
+        function openEasterEgg() {
+            const modal = document.getElementById('easterEggModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            playTone(440, 0.15, 'square');
+            setTimeout(() => playTone(554.37, 0.25, 'square'), 120);
+        }
+
+        function closeEasterEgg() {
+            const modal = document.getElementById('easterEggModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // تشغيل كروت الخربشة بعد تحميل الصفحة بالكامل
+        window.addEventListener('load', () => {
+            setTimeout(initScratchCards, 200);
+        });
+    </script>
+</body>
+</html>
